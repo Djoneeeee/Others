@@ -1,0 +1,76 @@
+"""
+    Программа вычисления Евклидово расстояния между всеми парами различных векторов
+В данной прогамме вычисление Евклидово расстояние между всеми парами различных векторов
+списка из файла vectors.csv, созданного предыдущей программой, и поиск минимального и
+максимального расстояния, а также распределение  расстояний.
+"""
+import csv
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+# Функция уменьшения размера массива для соблюдения требования по использованию памяти
+def decreasing_array(arr, decrease):
+    arr_mix = list(np.random.permutation(arr))
+    arr_decrease = arr_mix[decrease::]
+    return arr_decrease
+
+
+# Функция вычисления Евклидово расстояния между двумя векторами
+def calc_euclidean_distance(vector_one, vector_two):
+    sum = 0
+    for i in range(len(vector_one)):
+        sum += (vector_one[i] - vector_two[i]) ** 2
+    return sum**0.5
+
+
+vectors_array = []    # Пустой массив для векторов из файла vectors.csv
+with open('vectors.csv', newline='') as csv_file:
+    csv_reader = csv.reader(csv_file)
+    for row in csv_reader:
+        vector = []
+        for num in row:
+            vector.append(float(num))
+        vectors_array.append(vector)
+euclidean_distance_array = []    # Массив Евклидовых расстояний между парами векторов
+euclidean_distance_max, euclidean_distance_min = 0, 10
+vector_one_max, vector_two_max, vector_one_min, vector_two_min = 0, 0, 0, 0
+N = len(vectors_array)       # Количество векторов файла vectors.csv
+m = len(vectors_array[0])    # Размер вектора файла vectors.csv
+max_size = N * m   # Дополнительное требование по использованию памяти (структуры данных не более N x m элементов)
+# Цикл определения Евклидово расстояния между всеми парами различных векторов списка vectors и записи их в массив
+step = 0
+for _ in range(len(vectors_array) - 1):
+    # Пары определенных векторов
+    vector_one = 0 + step
+    vector_two = 1 + step
+    for _ in range(len(vectors_array) - 1 - step):
+        # Определение Евклидово расстояния между двумя векторами vector_one и vector_two
+        euclidean_distance = calc_euclidean_distance(vectors_array[vector_one], vectors_array[vector_two])
+        euclidean_distance_array.append(euclidean_distance)
+        # Вычисление минимального и максимального Евклидово расстояния и номеров векторов пары
+        if euclidean_distance > euclidean_distance_max:
+            euclidean_distance_max = euclidean_distance
+            vector_one_max, vector_two_max = vector_one + 1, vector_two + 1
+        if euclidean_distance < euclidean_distance_min:
+            euclidean_distance_min = euclidean_distance
+            vector_one_min, vector_two_min = vector_one + 1, vector_two + 1
+        # Проверка соблюдения размеров структуры данных не более N x m элементов
+        if len(euclidean_distance_array) > max_size - 1:
+            # Уменьшение размера списка Евклидово расстояния
+            pass
+        vector_two += 1
+    step += 1
+# Определение количества интервалов гистограммы распределения расстояний для шага 0.1
+bins = int((euclidean_distance_max - euclidean_distance_min) / 0.1)
+# Построение гистограммы распределения Евклидово расстояния между двумя векторами
+plt.hist(euclidean_distance_array, bins=bins)
+plt.ylabel('Counts')
+plt.xlabel('Data Euclidean distance')
+print("Максимальное Евклидово расстояние {0} между векторами {1} и {2}" .format(euclidean_distance_max,
+                                                                               vector_one_max,
+                                                                               vector_two_max))
+print("Минимальное Евклидово расстояние {0} между векторами {1} и {2}" .format(euclidean_distance_min,
+                                                                               vector_one_min,
+                                                                               vector_two_min))
+plt.show()
