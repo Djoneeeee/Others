@@ -1,0 +1,25 @@
+"""
+    Программа формирования исходных данных
+В данной программе происходит заполнение текстового файла vectors.csv, состоящего из N строк,
+в каждой из которых m случайных чисел (от -1 до +1), разделённых запятыми
+"""
+import csv
+import random
+N = 600  # Количество векторов
+m = 20   # Количество чисел в векторе
+if N > 500 and N <= 1000:
+    if m > 10 and m <= 50:
+        # Генерация и запись N векторов, состоящих из чисел в диапазоне от -1 до 1, размера m в файл vectors.csv
+        with open('vectors.csv', 'w', newline='') as csv_file:
+            csv_writer = csv.writer(csv_file, delimiter=',')
+            for row in range(N):
+                vector = []     # Пустой Вектор
+                # Заполнение вектора размера m числами в диапазоне от -1 до 1
+                for column in range(m):
+                    vector.append(random.uniform(-1, 1))
+                # Запись через запятую значений вектора в файл vectors.csv
+                csv_writer.writerow(vector)
+    else:
+        print("invalid vector size (10<m<=50)")
+else:
+    print("invalid number of vectors (500<N<=1000)")
